@@ -50,7 +50,7 @@
     applyLang();
     turn = null;
     if (state.chatting) say(UI().t.greet, { chips: Travis.chipsFor(lang, 'home') });
-    else { log.replaceChildren(); state.history = []; say(UI().t.hello, { welcome: true }); }
+    else { log.replaceChildren(); state.history = []; welcome(); }
   }
 
   /* ── contact links ───────────────────────────────────── */
@@ -221,9 +221,15 @@
     scrollLog();
   }
 
+  // The welcome: Travis's greeting, then ØMYSTIK, Mike's most important project, with one button
+  function welcome() {
+    const t = UI().t;
+    return say(t.hello + '\n' + t.featured, { welcome: true, chips: [{ label: t.featuredButton, open: 'omystik', featured: true }] });
+  }
+
   function renderChips(items) {
     chipsBox.replaceChildren(...items.map((c) => el('button', {
-      type: 'button', class: 'chip', text: c.label,
+      type: 'button', class: c.featured ? 'chip is-featured' : 'chip', text: c.label,
       onclick: () => (c.open ? pickProject(c.open, true) : ask(c.query, c.label))
     })));
   }
@@ -499,7 +505,7 @@
     if (deep && DATA.projects[deep]) return pickProject(deep, true, true);
     // The welcome bubble opens and writes itself (Travis turns to dots meanwhile)
     await wait(700);
-    say(UI().t.hello, { welcome: true });
+    welcome();
   }
 
   boot();

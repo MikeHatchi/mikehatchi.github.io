@@ -4,6 +4,10 @@
   --bg: #1C1C1C;         /* same background as omystik.org */
   --bg-2: #242424;
   --fg: #EDEDED;         /* 14.6:1 on --bg */
+  /* ØMYSTIK's tones, from omystik.org: its accent and its logo's gradient (used by one button) */
+  --omystik-accent: #F4B942;
+  --omystik-gradient: linear-gradient(90deg, #904860, #D84848, #F0A830, #F0D860);
+  --omystik-glow: rgba(244, 185, 66, 0.14);
   --muted: #8F8F8F;      /* 5.3:1 on --bg */
   --sep: #5A5A5A;        /* decorative only (| separators) */
   --line: #303030;
@@ -289,6 +293,18 @@ body:not(.is-chatting) .turn-head { display: none; }
 }
 .chip::after { content: ""; position: absolute; inset: -6px 0; }
 .chip:hover, .chip:focus-visible { border-color: var(--fg); background: rgba(255, 255, 255, 0.06); }
+/* The one coloured element of the site (Mike, 2026-10-19): ØMYSTIK's button, in omystik.org's
+   tones: the logo's gradient as its border, the site's amber accent as its text (9:1 on --bg) */
+.chip.is-featured {
+  border-color: transparent;
+  background: linear-gradient(var(--bg), var(--bg)) padding-box, var(--omystik-gradient) border-box;
+  color: var(--omystik-accent);
+}
+.chip.is-featured:hover, .chip.is-featured:focus-visible {
+  background: linear-gradient(var(--omystik-glow), var(--omystik-glow)) padding-box, linear-gradient(var(--bg), var(--bg)) padding-box, var(--omystik-gradient) border-box;
+  box-shadow: 0 0 14px var(--omystik-glow);
+}
+.chip.is-featured:focus-visible { outline-color: var(--omystik-accent); }
 
 /* The question field: a rounded composer that grows with the text,
    with a round send button, in the style of the chat bubbles */

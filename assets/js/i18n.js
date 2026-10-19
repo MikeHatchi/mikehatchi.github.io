@@ -28,6 +28,9 @@ window.TRAVIS_I18N = {
     t: {
       // Welcome screen: one line. The rest is said when the visitor starts talking.
       hello: 'Welcome, I\'m Travis.',
+      // The welcome's second line and its single button (Mike, 2026-10-19)
+      featured: 'Mike\'s most important project to date: ØMYSTIK.',
+      featuredButton: 'Discover ØMYSTIK',
       intro: 'Ask me anything about his work, or pick a topic below.',
       newsLead: (repo, when, msg) => `Latest: ${when}, Mike pushed to ${repo}: "${msg}".`,
       noNewsLead: 'Mike works on ømystik, an FHE peer-to-peer mesh in Rust.',
@@ -80,6 +83,8 @@ window.TRAVIS_I18N = {
     chips: { fhe: 'Travaux FHE', ml: 'Projets ML', news: 'Quoi de neuf', who: 'Qui est Mike ?', omystik: 'ømystik', contact: 'Contact', projects: 'Tous les projets' },
     t: {
       hello: 'Bienvenue, je suis Travis.',
+      featured: 'Le projet le plus important de Mike à ce jour : ØMYSTIK.',
+      featuredButton: 'Découvrir ØMYSTIK',
       intro: 'Posez-moi une question sur son travail, ou choisissez un sujet ci-dessous.',
       newsLead: (repo, when, msg) => `Dernière activité : ${when}, Mike a publié sur ${repo} : « ${msg} ».`,
       noNewsLead: 'Mike travaille sur ømystik, un maillage pair-à-pair FHE en Rust.',
