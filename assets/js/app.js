@@ -56,7 +56,8 @@
   /* ── contact links ───────────────────────────────────── */
   function setupContact() {
     const c = CFG.contact || {};
-    const pairs = [['#link-github', c.github], ['#link-linkedin', c.linkedin], ['#link-discord', c.discord]];
+    // (GitHub is the three-account menu below)
+    const pairs = [['#link-linkedin', c.linkedin], ['#link-discord', c.discord]];
     for (const [sel, href] of pairs) {
       const a = $(sel);
       if (href) a.href = href;
@@ -221,10 +222,48 @@
     scrollLog();
   }
 
-  // The welcome: Travis's greeting, then ØMYSTIK, Mike's most important project, with one button
-  function welcome() {
-    const t = UI().t;
-    return say(t.hello + '\n' + t.featured, { welcome: true, chips: [{ label: t.featuredButton, open: 'omystik', featured: true }] });
+  // The welcome: Travis's greeting alone (ØMYSTIK has its entry in the menu)
+  function welcome() { return say(UI().t.hello, { welcome: true }); }
+
+  /* ── the menu "::" ───────────────────────────────────── */
+  const menuBtn = $('#menu-btn'), menuPanel = $('#menu-panel');
+  function toggleMenu(open) {
+    const show = open === undefined ? menuPanel.hidden : open;
+    menuPanel.hidden = !show;
+    menuBtn.setAttribute('aria-expanded', String(show));
+    if (!show) toggleDropdown(null);
+  }
+  // New chat: the conversation is forgotten (it was only in memory) and Travis greets again
+  function newChat() {
+    toggleMenu(false);
+    if (state.busy) return;
+    if (state.openId) closeStage();
+    log.replaceChildren(); state.history = []; turn = null;
+    state.chatting = false;
+    document.body.classList.remove('is-chatting');
+    renderChips([]);
+    welcome();
+    $('#ask-input').focus();
+  }
+  // Back to the chat: the open project closes, the question field takes the focus
+  function backToChat() {
+    toggleMenu(false);
+    if (state.openId) closeStage();
+    window.scrollTo({ top: 0, behavior: reduced ? 'auto' : 'smooth' });
+    $('#ask-input').focus();
+  }
+  // The glass bar (projects, latest, technology, languages) and the language live in the menu;
+  // on phones the links (GitHub, LinkedIn, Discord) and the footer join them
+  const phone = window.matchMedia('(max-width: 900px)');
+  // (in the menu's order: projects and the glass bar, the links, the language, the footer)
+  const movable = [['.glassnav', true], ['.socials', false], ['.topnav', true], ['.footer', false]].map(([sel, always]) => {
+    const n = document.querySelector(sel); return { n, always, parent: n.parentNode, next: n.nextSibling };
+  });
+  function placeMenu() {
+    for (const m of movable) {
+      if (m.always || phone.matches) $('#menu-more').append(m.n);
+      else if (m.n.parentNode !== m.parent) m.parent.insertBefore(m.n, m.next && m.next.parentNode === m.parent ? m.next : null);
+    }
   }
 
   function renderChips(items) {
@@ -375,7 +414,7 @@
   }
   const toggleLatest = (open) => toggleDropdown('latest-panel', open);
   dropdowns.forEach((d) => d.btn.addEventListener('click', () => toggleDropdown(d.panel.id)));
-  document.addEventListener('click', (e) => { if (!e.target.closest('.glassnav')) toggleDropdown(null); });
+  document.addEventListener('click', (e) => { if (!e.target.closest('.glassnav')) toggleDropdown(null); });   // (inside the menu too)
   // Escape closes the open dropdown only (not an open project behind it)
   document.addEventListener('keydown', (e) => {
     const open = dropdowns.find((d) => !d.panel.hidden);
@@ -395,8 +434,19 @@
         onclick: () => { toggleDropdown(null); showTopic(label, t.projects); }
       }, [el('span', { text: label }), el('span', { class: 'topic-count', text: String(t.projects.length) })])]);
     }));
-    list('#themes-list', DATA.themes || []);
-    list('#languages-list', DATA.languages || []);
+    // ordered by number of projects, most first (Mike, 2026-10-19)
+    const byCount = (items) => items.map((t, i) => ({ t, i })).sort((a, b) => b.t.projects.length - a.t.projects.length || a.i - b.i).map((x) => x.t);
+    list('#themes-list', byCount(DATA.themes || []));
+    list('#languages-list', byCount(DATA.languages || []));
+    // Projects: by year, most recent first; training and unfinished work left out (Mike)
+    const HIDDEN = ['udacity', 'airfoil'];
+    const start = (id) => Number((String(DATA.projects[id].year || '').match(/\d{4}/) || [0])[0]);
+    const order = [...new Set((DATA.groups || []).flatMap((g) => g.projects))];
+    const ids = order.filter((id) => DATA.projects[id] && !HIDDEN.includes(id)).sort((a, b) => start(b) - start(a) || order.indexOf(a) - order.indexOf(b));
+    $('#projects-list').replaceChildren(...ids.map((id) => el('li', {}, [el('button', {
+      type: 'button', class: 'topic',
+      onclick: () => { toggleDropdown(null); pickProject(id, true); }
+    }, [el('span', { text: DATA.projects[id].title }), el('span', { class: 'topic-count', text: DATA.projects[id].year || '' })])])));
   }
 
   async function showTopic(label, ids) {
@@ -487,7 +537,23 @@
     window.addEventListener('resize', fit);
     fit();
     $('#stage-close').addEventListener('click', closeStage);
-    document.querySelector('.mark').addEventListener('click', (e) => { e.preventDefault(); closeStage(); window.scrollTo({ top: 0, behavior: reduced ? 'auto' : 'smooth' }); });
+    menuBtn.addEventListener('click', () => toggleMenu());
+    // GitHub: a small menu of the three accounts; a click outside or Escape closes it
+    const ghBtn = $('#gh-btn'), ghPanel = $('#gh-panel');
+    const toggleGh = (open) => { const show = open === undefined ? ghPanel.hidden : open; ghPanel.hidden = !show; ghBtn.setAttribute('aria-expanded', String(show)); };
+    ghBtn.addEventListener('click', (e) => { e.stopPropagation(); toggleGh(); });
+    ghPanel.addEventListener('click', (e) => { if (e.target.closest('a')) toggleGh(false); });
+    document.addEventListener('click', (e) => { if (!ghPanel.hidden && !e.target.closest('.gh')) toggleGh(false); });
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !ghPanel.hidden) { e.stopImmediatePropagation(); toggleGh(false); ghBtn.focus(); } }, true);
+    $('#menu-new').addEventListener('click', newChat);
+    $('#menu-back').addEventListener('click', backToChat);
+    // Discover ØMYSTIK opens omystik.org (a link: the menu closes like on any link)
+    // a link or a topic picked inside the menu closes it; a click outside closes it
+    menuPanel.addEventListener('click', (e) => { if (e.target.closest('a, .topic')) toggleMenu(false); });
+    document.addEventListener('click', (e) => { if (!menuPanel.hidden && !e.target.closest('.menu')) toggleMenu(false); });
+    document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && !menuPanel.hidden) { e.stopImmediatePropagation(); toggleMenu(false); menuBtn.focus(); } }, true);
+    placeMenu();
+    phone.addEventListener('change', placeMenu);
     document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && state.openId) closeStage(); });
     $('#ask').addEventListener('submit', (e) => {
       e.preventDefault();

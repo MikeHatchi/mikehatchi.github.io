@@ -1,6 +1,9 @@
 /* Travis::iv — interface text and Travis's lines, English and French. */
 window.TRAVIS_I18N = {
   en: {
+    // The menu "::" (Mike, 2026-10-19)
+    ghOmystik: 'Open source (2025 → now)', ghVrona: 'Projects 2019–2025: FHE.Chess, FHE.IRM, BOT88…', ghMike: 'Training and first projects',
+    menuLabel: 'Menu', projectsMenu: 'PROJECTS', newChat: 'New chat', backToChat: 'Back to the chat', featuredButton: 'Discover ØMYSTIK',
     skip: 'Skip to the conversation',
     email: 'EMAIL',
     talk: '› TALK TO TRAVIS',
@@ -17,7 +20,7 @@ window.TRAVIS_I18N = {
     close: '× CLOSE',
     work: 'WORK',
     path: 'PATH',
-    themes: 'TECHNOLOGY',
+    themes: 'TECHNOLOGIES',
     languages: 'LANGUAGES',
     footer: 'Travis answers from Mike\'s public work. No conversation is stored.',
     newsEmpty: 'No recent activity to show right now.',
@@ -28,9 +31,6 @@ window.TRAVIS_I18N = {
     t: {
       // Welcome screen: one line. The rest is said when the visitor starts talking.
       hello: 'Welcome, I\'m Travis.',
-      // The welcome's second line and its single button (Mike, 2026-10-19)
-      featured: 'Mike\'s most important project to date: ØMYSTIK.',
-      featuredButton: 'Discover ØMYSTIK',
       intro: 'Ask me anything about his work, or pick a topic below.',
       newsLead: (repo, when, msg) => `Latest: ${when}, Mike pushed to ${repo}: "${msg}".`,
       noNewsLead: 'Mike works on ømystik, an FHE peer-to-peer mesh in Rust.',
@@ -57,6 +57,8 @@ window.TRAVIS_I18N = {
     }
   },
   fr: {
+    ghOmystik: 'Open source (2025 → aujourd\'hui)', ghVrona: 'Projets 2019–2025 : FHE.Chess, FHE.IRM, BOT88…', ghMike: 'Formation et premiers projets',
+    menuLabel: 'Menu', projectsMenu: 'PROJETS', newChat: 'Nouveau chat', backToChat: 'Retour au chat', featuredButton: 'Découvrir ØMYSTIK',
     skip: 'Aller à la conversation',
     email: 'E-MAIL',
     talk: '› PARLER À TRAVIS',
@@ -73,7 +75,7 @@ window.TRAVIS_I18N = {
     close: '× FERMER',
     work: 'TRAVAUX',
     path: 'PARCOURS',
-    themes: 'TECHNOLOGIE',
+    themes: 'TECHNOLOGIES',
     languages: 'LANGAGES',
     footer: 'Travis répond à partir du travail public de Mike. Aucune conversation n\'est conservée.',
     newsEmpty: 'Pas d\'activité récente à afficher pour le moment.',
@@ -83,8 +85,6 @@ window.TRAVIS_I18N = {
     chips: { fhe: 'Travaux FHE', ml: 'Projets ML', news: 'Quoi de neuf', who: 'Qui est Mike ?', omystik: 'ømystik', contact: 'Contact', projects: 'Tous les projets' },
     t: {
       hello: 'Bienvenue, je suis Travis.',
-      featured: 'Le projet le plus important de Mike à ce jour : ØMYSTIK.',
-      featuredButton: 'Découvrir ØMYSTIK',
       intro: 'Posez-moi une question sur son travail, ou choisissez un sujet ci-dessous.',
       newsLead: (repo, when, msg) => `Dernière activité : ${when}, Mike a publié sur ${repo} : « ${msg} ».`,
       noNewsLead: 'Mike travaille sur ømystik, un maillage pair-à-pair FHE en Rust.',

@@ -54,8 +54,104 @@ button { font: inherit; color: inherit; }
   background: linear-gradient(to bottom, var(--bg) 70%, transparent);
   font-size: 14px; letter-spacing: var(--track); text-transform: uppercase;
 }
-.mark { font-size: 15px; letter-spacing: var(--track); min-height: 44px; display: inline-flex; align-items: center; gap: 0.6em; }
-.mark b { font-weight: 700; }
+/* The menu "::" (four dots, Mike 2026-10-19): new chat, back to the chat, ØMYSTIK; on phones
+   also the glass bar, the links and language, and the footer */
+.menu { position: relative; justify-self: start; }
+.menu-btn {
+  width: 56px; height: 56px; display: grid; place-items: center;
+  padding: 0; border: 1px solid transparent; border-radius: 14px;
+  background: none; color: var(--fg); cursor: pointer;
+  transition: background-color .2s ease, border-color .2s ease;
+}
+.menu-btn:hover, .menu-btn:focus-visible, .menu-btn[aria-expanded="true"] { background: rgba(255, 255, 255, 0.07); border-color: var(--glass-edge); }
+.menu-icon { width: 40px; height: 40px; fill: currentColor; }
+.menu-panel {
+  position: absolute; top: calc(100% + 8px); left: 0; z-index: 7;
+  width: min(320px, calc(100vw - 24px));
+  max-height: calc(100svh - 80px); overflow-y: auto; scrollbar-width: none;
+  padding: 6px;
+  border: 1px solid var(--glass-edge); border-radius: 16px;
+  background: var(--glass), rgba(28, 28, 28, 0.92);
+  box-shadow: var(--glass-light), 0 18px 40px rgba(0, 0, 0, 0.45);
+  -webkit-backdrop-filter: blur(20px) saturate(140%);
+  backdrop-filter: blur(20px) saturate(140%);
+  transform-origin: top left;
+  animation: dd-in .3s var(--spring) both;
+}
+.menu-panel::-webkit-scrollbar { display: none; }
+.menu-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 2px; }
+.menu-item {
+  position: relative;
+  width: 100%; min-height: 32px; padding: 0 14px;     /* looks 32px; the ::after keeps a 44px tap area */
+  display: flex; align-items: center;
+  border: 1px solid transparent; border-radius: 12px; background: none; color: var(--fg); cursor: pointer;
+  font: inherit; font-size: 12px; letter-spacing: var(--track); text-transform: uppercase; text-align: left;
+  transition: background-color .2s ease;
+}
+.menu-item:hover, .menu-item:focus-visible { background: rgba(255, 255, 255, 0.07); }
+a.menu-item { text-decoration: none; }
+.menu-item::after { content: ""; position: absolute; inset: -6px 0; }
+/* ØMYSTIK's entry, the one coloured element: omystik.org's amber, no frame (Mike) */
+.menu-item.is-featured { color: var(--omystik-accent); }
+.menu-item.is-featured:hover, .menu-item.is-featured:focus-visible { background: var(--omystik-glow); outline-color: var(--omystik-accent); }
+/* In the menu: the glass bar's entries, then the links and the language (and on phones the
+   footer), below a line */
+.menu-more:empty { display: none; }
+.menu-more { margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--glass-edge); display: flex; flex-direction: column; gap: 8px; }
+.menu-more .glassnav { --nav-h: 32px; display: flex; flex-direction: column; align-items: stretch; gap: 2px; padding: 0; border: 0; background: none; box-shadow: none; -webkit-backdrop-filter: none; backdrop-filter: none; }
+.menu-more .dropdown { width: 100%; }
+.menu-more .dd-trigger { width: 100%; min-height: 32px; justify-content: space-between; padding: 0 14px; font-size: 12px; }
+.menu-more .topic { position: relative; min-height: 32px; }
+.menu-more .topic::after { content: ""; position: absolute; inset: -6px 0; }
+.menu-more .dd-panel { position: static; translate: none; width: auto; max-height: none; margin: 2px 0 6px; box-shadow: none; animation: none; }
+.menu-more .topnav { justify-content: flex-start; flex-wrap: wrap; gap: 0 18px; padding: 0 14px; font-size: 12px; letter-spacing: var(--track); text-transform: uppercase; }
+.menu-more .sep { display: none; }
+.menu-more .footer { padding: 4px 14px 8px; text-align: left; font-size: 12px; color: var(--muted); }
+/* GitHub, LinkedIn, Discord: their words on phones; on wide screens their small logos, the
+   words kept for screen readers and search engines */
+.social-icon { display: none; width: 20px; height: 20px; fill: currentColor; }
+/* GitHub's three accounts: a small glass panel under the logo (wide screens), a list in the menu (phones) */
+.gh { position: relative; display: inline-flex; }
+.gh > .social { background: none; border: 0; padding: 0; color: var(--fg); cursor: pointer; font: inherit; letter-spacing: inherit; text-transform: inherit; min-height: 44px; display: inline-flex; align-items: center; }
+.gh-panel {
+  position: absolute; top: calc(100% + 8px); right: 0; z-index: 7;
+  width: min(300px, calc(100vw - 24px)); padding: 6px;
+  border: 1px solid var(--glass-edge); border-radius: 16px;
+  background: var(--glass), rgba(28, 28, 28, 0.92);
+  box-shadow: var(--glass-light), 0 18px 40px rgba(0, 0, 0, 0.45);
+  -webkit-backdrop-filter: blur(20px) saturate(140%); backdrop-filter: blur(20px) saturate(140%);
+  text-transform: none; letter-spacing: normal;
+  transform-origin: top right; animation: dd-in .3s var(--spring) both;
+}
+.gh-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 2px; }
+.gh-item { position: relative; display: flex; align-items: center; gap: 10px; min-height: 40px; padding: 4px 10px; border-radius: 12px; color: var(--fg); text-decoration: none; }
+.gh-item::after { content: ""; position: absolute; inset: -2px 0; }
+.gh-item:hover, .gh-item:focus-visible { background: rgba(255, 255, 255, 0.07); }
+/* a 28px column for the accounts' logos (VRONA's thin rings vanish smaller); ØMYSTIK's
+   logotype is wide, so it replaces the account's name instead */
+.gh-logo { flex: none; width: 28px; height: 28px; display: grid; place-items: center; }
+.gh-logo img { width: 28px; height: 28px; object-fit: contain; }
+.gh-wordmark { display: block; height: 15px; width: auto; margin: 2px 0 3px; }
+.gh-text { display: flex; flex-direction: column; min-width: 0; }
+.gh-name { font-size: 12px; font-weight: 700; }
+.gh-desc { font-size: 11px; color: var(--muted); }
+.menu-more .gh { display: flex; flex-direction: column; align-items: flex-start; flex-basis: 100%; }
+.menu-more .gh-panel { position: static; width: 100%; margin: 2px 0 4px; box-shadow: none; animation: none; }
+
+/* the links: on the right of the top bar on wide screens, a row in the menu on phones */
+.socials { display: flex; align-items: center; gap: 0 14px; }
+.socials a { min-height: 44px; display: inline-flex; align-items: center; }
+.topbar > .socials { grid-column: 3; justify-self: end; }
+.menu-more .socials { padding: 0 14px; gap: 0 18px; flex-wrap: wrap; font-size: 12px; letter-spacing: var(--track); text-transform: uppercase; }
+@media (min-width: 901px) {
+  .social { min-width: 44px; justify-content: center; }
+  .topbar > .socials { gap: 0 4px; }
+  .social-icon { display: block; }
+  .social-label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+  .menu-more .topnav { gap: 0 6px; padding: 0 8px; }
+  /* tighter letters in the menu on wide screens (Mike: the words looked spread apart) */
+  .menu-item, .menu-more .dd-trigger, .menu-more .topnav, .menu-more .lang button { letter-spacing: 0.04em; }
+}
 .topnav { display: flex; align-items: center; flex-wrap: wrap; gap: 0 14px; }
 .topnav a { min-height: 44px; display: inline-flex; align-items: center; }
 .sep { color: var(--sep); }
@@ -354,7 +450,7 @@ body:not(.is-chatting) .turn-head { display: none; }
 
 /* ── GLASS BAR (top centre): LATEST and PATH dropdowns ──
    A compact "liquid glass" bar; each entry opens a narrow glass panel of tiles. */
-.topbar > .mark { justify-self: start; }
+.topbar > .menu { justify-self: start; }
 .topbar > .topnav { justify-self: end; }
 .glassnav {
   /* Height of the bar's entries: lower it for a thinner bar (e.g. 32px).
@@ -393,7 +489,6 @@ body:not(.is-chatting) .turn-head { display: none; }
 }
 @media (min-width: 901px) and (max-width: 1100px) {
   .topbar { font-size: 12px; gap: 12px; }
-  .mark { font-size: 13px; }
   .topnav { gap: 0 10px; }
   .dd-trigger { padding: 0 10px; font-size: 11px; }
 }
@@ -543,10 +638,10 @@ body:not(.is-chatting) .turn-head { display: none; }
 
 /* ── PHONE ───────────────────────────────────────────── */
 @media (max-width: 900px) {
-  /* As on omystik.org: stacked and centred, smaller, spacing instead of | */
-  .topbar { display: flex; flex-direction: column; align-items: center; gap: 6px; padding: 8px 16px 16px; font-size: 12px; }
-  .topbar > .mark, .topbar > .topnav { justify-self: auto; }
-  .topnav { justify-content: center; gap: 0 16px; }
+  /* Phones: the top bar is the menu "::" alone; the glass bar, the links and language and the
+     footer live in the menu (app.js moves them), as a full-width sheet */
+  .topbar { display: flex; align-items: center; padding: 8px 12px; font-size: 12px; }
+  .menu-panel { position: fixed; top: 72px; left: 12px; right: 12px; width: auto; max-height: calc(100dvh - 84px); }
   .sep { display: none; }
   .stagewrap { padding: 16px 16px 88px; }
   /* Phone: one column, the chat below the avatar */
@@ -556,7 +651,12 @@ body:not(.is-chatting) .turn-head { display: none; }
   .avatar { width: min(72vw, 200px); height: min(72vw, 200px); }
   .is-chatting .avatar { width: 112px; height: 112px; }
   body.is-chatting:not(.is-presenting) .avatar { width: min(88vw, 320px); height: min(88vw, 320px); }
-  .is-chatting .log { max-height: 46svh; }
+  /* Chatting on a phone: the chat takes the whole screen under the menu, the answers scroll in
+     it, the question field stays at the bottom; the avatar stays behind it, blurred */
+  body.is-chatting:not(.is-presenting) .stagewrap { min-height: 0; padding: 0 12px 12px; place-items: stretch; }
+  body.is-chatting:not(.is-presenting) .travis { height: calc(100svh - 84px); height: calc(100dvh - 84px); }
+  body.is-chatting:not(.is-presenting) .chat { flex: 1 1 auto; min-height: 0; }
+  body.is-chatting:not(.is-presenting) .log { flex: 1 1 auto; min-height: 0; max-height: none; }
   .is-presenting .stagewrap { grid-template-columns: minmax(0, 1fr); padding: 16px 16px 40px; gap: 24px; }
   .is-presenting .stage, .is-presenting .travis { order: 0; }   /* phones: Travis above the project, as before */
   .is-presenting .travis { position: static; }

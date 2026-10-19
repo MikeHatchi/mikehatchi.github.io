@@ -31,8 +31,8 @@ window.TRAVIS_DATA = {
   // with them). Built from each project's stack and tags below; edit freely.
   themes: [
     { label: { en: 'FHE', fr: 'FHE' }, projects: ['omystik', 'fhe-irm', 'fhe-chess', 'fhe-geomaze'] },
-    { label: { en: 'Machine learning', fr: 'Machine learning' }, projects: ['fhe-chess', 'bot88', 'odetection', 'udacity', 'f1cars', 'airfoil'] },
-    { label: { en: 'Deep learning', fr: 'Deep learning' }, projects: ['fhe-chess', 'bot88', 'odetection', 'udacity', 'f1cars'] },
+    // one entry: machine and deep learning apart made no sense (Mike, 2026-10-19)
+    { label: { en: 'Machine & deep learning', fr: 'Machine & deep learning' }, projects: ['fhe-chess', 'bot88', 'odetection', 'udacity', 'f1cars', 'airfoil'] },
     { label: { en: 'Cryptography', fr: 'Cryptographie' }, projects: ['omystik', 'fhe-irm', 'fhe-chess', 'mystik-p2p', 'fhe-geomaze'] },
     { label: { en: 'Blockchain', fr: 'Blockchain' }, projects: ['fhe-irm', 'metahackers', 'fhe-geomaze', 'slws'] },
     { label: { en: 'P2P', fr: 'P2P' }, projects: ['omystik', 'mystik-p2p'] },
@@ -86,7 +86,7 @@ window.TRAVIS_DATA = {
 
     'fhe-irm': {
       title: 'FHE.IRM',
-      year: '2024 → 2026',
+      year: '2024',   // Mike, 2026-10-19: not 2026
       pillars: ['Confidential', 'Distributed'],
       stack: ['Solidity', 'Zama fhEVM', 'React', 'fhevmjs'],
       pitch: {
