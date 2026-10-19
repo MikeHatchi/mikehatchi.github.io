@@ -1,0 +1,23 @@
+[
+ {
+  "repo": "omystik/omystik",
+  "date": "2026-10-12T12:34:19Z",
+  "en": "added link to NATO's DIANA",
+  "fr": "added link to NATO's DIANA",
+  "url": "https://github.com/omystik/omystik/commit/a3ec672820ae18bd7c80f876fa7b839022bdb7ee"
+ },
+ {
+  "repo": "omystik/omystik",
+  "date": "2026-10-12T10:57:57Z",
+  "en": "clarification about ANSSI and SBDU export control",
+  "fr": "clarification about ANSSI and SBDU export control",
+  "url": "https://github.com/omystik/omystik/commit/59058311181cdd701ec5d47262ea586d8d53eba7"
+ },
+ {
+  "repo": "omystik/omystik",
+  "date": "2026-10-09T16:50:23Z",
+  "en": "fixed wording at ReadMe",
+  "fr": "fixed wording at ReadMe",
+  "url": "https://github.com/omystik/omystik/commit/aeae04afc304aab504219cab3b25923956eb51a5"
+ }
+]
