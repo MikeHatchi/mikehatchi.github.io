@@ -1,6 +1,6 @@
 # mikehatchi.github.io
 
-Mike Hatchi's site: machine learning, distributed systems and confidential computing (FHE).
+Michael John Hatchi's site: machine learning, distributed systems and confidential computing (FHE).
 
 **Live: https://mikehatchi.github.io**
 
@@ -12,4 +12,4 @@ Travis, an AI agent with Mike's avatar, presents his projects and answers visito
 
 Contact: [LinkedIn](https://www.linkedin.com/in/michaeljohnhatchi/) or [Discord](https://discord.com/users/734775961542852701).
 
-© Mike Hatchi. The avatar is Mike's property.
+© Michael John Hatchi. Travis (the avatar) is Michael John Hatchi's property.
