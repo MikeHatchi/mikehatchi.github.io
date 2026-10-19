@@ -311,6 +311,12 @@ body:not(.is-chatting) .turn-head { display: none; }
   background: none; border: 0; color: var(--fg);
   font: inherit; line-height: 1.5;
 }
+/* iOS zooms into a field whose text is under 16px: on phones and touch screens the field is 16px */
+@media (max-width: 900px), (pointer: coarse) {
+  .ask textarea { font-size: 16px; }
+  /* the hint keeps the site's size: only the typed text decides the zoom */
+  .ask textarea::placeholder { font-size: 12px; }
+}
 .ask textarea::placeholder { color: var(--muted); }
 .ask textarea:focus { outline: none; }
 .send {
