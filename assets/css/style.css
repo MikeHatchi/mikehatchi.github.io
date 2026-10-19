@@ -107,9 +107,11 @@ a.menu-item { text-decoration: none; }
 .menu-more .topnav { justify-content: flex-start; flex-wrap: wrap; gap: 0 18px; padding: 0 14px; font-size: 12px; letter-spacing: var(--track); text-transform: uppercase; }
 .menu-more .sep { display: none; }
 .menu-more .footer { padding: 4px 14px 8px; text-align: left; font-size: 12px; color: var(--muted); }
-/* GitHub, LinkedIn, Discord: their words on phones; on wide screens their small logos, the
-   words kept for screen readers and search engines */
-.social-icon { display: none; width: 20px; height: 20px; fill: currentColor; }
+/* GitHub, LinkedIn, Discord: their small logos, on every screen (Mike); the words are kept for
+   screen readers and search engines */
+.social { min-width: 44px; justify-content: center; }
+.social-icon { display: block; width: 20px; height: 20px; fill: currentColor; }
+.social-label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 /* GitHub's three accounts: a small glass panel under the logo (wide screens), a list in the menu (phones) */
 .gh { position: relative; display: inline-flex; }
 .gh > .social { background: none; border: 0; padding: 0; color: var(--fg); cursor: pointer; font: inherit; letter-spacing: inherit; text-transform: inherit; min-height: 44px; display: inline-flex; align-items: center; }
@@ -135,19 +137,18 @@ a.menu-item { text-decoration: none; }
 .gh-text { display: flex; flex-direction: column; min-width: 0; }
 .gh-name { font-size: 12px; font-weight: 700; }
 .gh-desc { font-size: 11px; color: var(--muted); }
-.menu-more .gh { display: flex; flex-direction: column; align-items: flex-start; flex-basis: 100%; }
-.menu-more .gh-panel { position: static; width: 100%; margin: 2px 0 4px; box-shadow: none; animation: none; }
+/* in the menu the three logos share one row; GitHub's accounts open below it, full width */
+.menu-more .gh { display: contents; }
+.menu-more .gh-panel { position: static; order: 1; flex-basis: 100%; width: 100%; margin: 2px 0 4px; box-shadow: none; animation: none; }
 
 /* the links: on the right of the top bar on wide screens, a row in the menu on phones */
 .socials { display: flex; align-items: center; gap: 0 14px; }
 .socials a { min-height: 44px; display: inline-flex; align-items: center; }
 .topbar > .socials { grid-column: 3; justify-self: end; }
-.menu-more .socials { padding: 0 14px; gap: 0 18px; flex-wrap: wrap; font-size: 12px; letter-spacing: var(--track); text-transform: uppercase; }
+/* the first logo's left edge lines up with the words above (14px): its 44px box starts 12px before it */
+.menu-more .socials { padding: 0 14px 0 2px; gap: 0 6px; flex-wrap: wrap; }
 @media (min-width: 901px) {
-  .social { min-width: 44px; justify-content: center; }
   .topbar > .socials { gap: 0 4px; }
-  .social-icon { display: block; }
-  .social-label { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
   .menu-more .topnav { gap: 0 6px; padding: 0 8px; }
   /* tighter letters in the menu on wide screens (Mike: the words looked spread apart) */
   .menu-item, .menu-more .dd-trigger, .menu-more .topnav, .menu-more .lang button { letter-spacing: 0.04em; }
