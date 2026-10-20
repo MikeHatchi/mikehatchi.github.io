@@ -56,7 +56,8 @@
   /* ── contact links ───────────────────────────────────── */
   function setupContact() {
     const c = CFG.contact || {};
-    // (GitHub is the three-account menu below)
+    // The links are written in index.html (robots and link previews don't run JavaScript); config.js
+    // may update them, and an empty entry hides its link. (GitHub is the three-account menu below)
     const pairs = [['#link-linkedin', c.linkedin], ['#link-discord', c.discord]];
     for (const [sel, href] of pairs) {
       const a = $(sel);
