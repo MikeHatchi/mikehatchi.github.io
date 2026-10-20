@@ -219,6 +219,15 @@ img.avatar { padding: 13%; object-fit: contain; }   /* fallback before/without t
   /* Chat type scale, as in the component: messages 14px, tool cards 12px,
      the name and the topic buttons 11px */
   font-size: 12px; line-height: 1.55;
+  /* the conversation in Helvetica, regular weight; only what matters is bold (Michael, 2026-10-20) */
+  font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-weight: 400;
+}
+.chat strong { font-weight: 700; }
+/* Chatting: one reading column of at most 740 px, the text at 15 px; on wide screens the
+   conversation takes the height left above the field, so a long reply keeps its beginning */
+body.is-chatting:not(.is-presenting) .chat { flex: 0 1 740px; max-width: 740px; font-size: 15px; }
+@media (min-width: 901px) {
+  body.is-chatting:not(.is-presenting) .log { max-height: calc(100svh - 330px); min-height: 240px; }
 }
 .chips:empty { display: none; }
 .is-chatting .avatar { width: 200px; height: 200px; }
@@ -242,6 +251,8 @@ body.is-chatting:not(.is-presenting) .travis-name { display: none; }
 /* while Travis thinks or talks, the dots behind the chat light up: nearly sharp and bright (Michael,
    2026-10-20: blurred, the dots spread into grey); the bubbles keep their own background */
 body.is-chatting:not(.is-presenting).is-thinking .avatar, body.is-chatting:not(.is-presenting).is-talking .avatar { opacity: .85; filter: blur(1.5px); }
+/* while Travis prepares his reply, the same blur as while the visitor types (Michael, 2026-10-20) */
+body.is-chatting:not(.is-presenting).is-thinking .avatar { filter: blur(8px); }
 body.is-chatting:not(.is-presenting) .avatar { transition: width .6s ease, height .6s ease, border-color .3s ease, opacity .4s ease, filter .4s ease; }
 @keyframes behind { from { opacity: 0; } }
 
@@ -294,40 +305,22 @@ body.is-chatting:not(.is-presenting) .avatar { transition: width .6s ease, heigh
 }
 @keyframes enter { from { opacity: 0; transform: translateY(10px) scale(.98); } }
 
-/* The visitor's message: a bubble on the right */
+/* The visitor's message: a small plain bubble on the right (Michael, 2026-10-20: sober, after
+   the assistant-ui "Perplexity" example: no gradient, reflection, shadow or thick edge) */
 .msg-user {
-  width: fit-content; max-width: 80%; margin: 0 0 12px auto;
-  padding: 10px 14px;
-  border-radius: 16px 16px 4px 16px;
-  /* Glass tinted with --chat-user, for any colour, light or dark:
-     - a light wash of the colour (30% → 10%), so the background shows through
-       and white text stays readable
-     - a reflection across the top, as light on a pane of glass
-     - thickness: a bright top edge, a fine dark lower edge, a soft drop shadow
-     (solid colour where color-mix isn't supported) */
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  border: 1px solid color-mix(in srgb, var(--chat-user) 40%, rgba(255, 255, 255, 0.05));
-  background: var(--chat-user);
-  background:
-    linear-gradient(180deg, rgba(255, 255, 255, 0.22) 0%, rgba(255, 255, 255, 0.04) 45%, transparent 70%),
-    linear-gradient(135deg,
-      color-mix(in srgb, var(--chat-user) 30%, transparent),
-      color-mix(in srgb, var(--chat-user) 10%, transparent));
-  box-shadow:
-    inset 0 1px 0 rgba(255, 255, 255, 0.45),
-    inset 0 -1px 0 rgba(0, 0, 0, 0.25),
-    0 6px 18px rgba(0, 0, 0, 0.35);
-  -webkit-backdrop-filter: blur(14px) saturate(140%);
-  backdrop-filter: blur(14px) saturate(140%);
-  white-space: pre-line;
-  animation: enter .45s var(--spring) both;
+  width: fit-content; max-width: 85%; margin: 0 0 24px auto;
+  padding: 9px 14px;
+  border: 1px solid rgba(255, 255, 255, 0.06); border-radius: 14px;
+  background: #2A2A2A;          /* --fg on it: 11.6:1 */
+  font-weight: 400; line-height: 1.6;
+  white-space: pre-line; overflow-wrap: anywhere;
+  animation: enter .3s ease both;
 }
-
 /* A Travis turn: name with a sparkle, dots, tool cards, reply bubble */
 .turn {
   display: flex; flex-direction: column; gap: 8px;
-  max-width: 88%; margin: 0 0 12px;
-  animation: enter .45s var(--spring) both;
+  max-width: 100%; margin: 0 0 28px;
+  animation: enter .3s ease both;
 }
 .turn:last-child { margin-bottom: 0; }
 /* On the welcome screen "travıs" is already written under the avatar */
@@ -338,23 +331,20 @@ body:not(.is-chatting) .turn-head { display: none; }
 @keyframes spin { to { transform: rotate(360deg); } }
 
 .reply {
-  margin: 0; width: fit-content;
-  padding: 10px 14px;
-  border: 1px solid var(--glass-edge);
-  border-radius: 4px 16px 16px 16px;
-  /* glass on a dark base: the bright dots behind the chat never cross the text */
-  background: var(--glass), rgba(28, 28, 28, 0.86);
-  box-shadow: var(--glass-light);
-  -webkit-backdrop-filter: blur(14px) saturate(140%);
-  backdrop-filter: blur(14px) saturate(140%);
-  white-space: pre-line;
+  /* the text straight on the page, the halo behind it: no card, edge, gradient, shadow or glass */
+  margin: 0; width: 100%;
+  font-weight: 400; line-height: 1.6;
+  white-space: pre-line; overflow-wrap: anywhere;
 }
 /* The welcome bubble ("Bienvenue sur le github…"): its own text size */
 .reply.is-welcome { font-size: 16px; }
 /* the answer being written: provisional, in grey, until the verified answer replaces it */
-.reply.is-draft { color: var(--muted); white-space: normal; }
-.reply.is-draft .draft-unit { margin: 0 0 .6em; animation: enter .3s ease both; }
-.reply.is-draft .draft-state { margin: 0; font-size: 11px; letter-spacing: var(--track-sm); opacity: .8; }
+.reply.is-draft { color: var(--muted); white-space: normal; }   /* 5.3:1 */
+.reply.is-draft .draft-unit { margin: 0 0 1em; animation: enter .3s ease both; }
+.reply.is-draft .draft-state { margin: 0; font-size: 11px; letter-spacing: var(--track-sm); }
+/* Before the first words: one quiet line where the reply will be */
+.pending { margin: 0; color: var(--muted); font-size: 12px; animation: pending 1.6s ease-in-out infinite; }
+@keyframes pending { 50% { opacity: .45; } }
 .reply .w { animation: word-in .25s ease both; }
 @keyframes word-in { from { opacity: 0; } }
 .caret {
@@ -364,34 +354,6 @@ body:not(.is-chatting) .turn-head { display: none; }
 }
 @keyframes caret { 50% { opacity: 0; } }
 
-/* Thinking: three dots bouncing in turn */
-.dots { display: flex; gap: 5px; padding: 8px 2px; }
-.dots i { width: 6px; height: 6px; border-radius: 3px; background: var(--muted); animation: bounce .9s ease-in-out infinite; }
-.dots i:nth-of-type(2) { animation-delay: .15s; }
-.dots i:nth-of-type(3) { animation-delay: .3s; }
-@keyframes bounce { 0%, 100% { transform: translateY(0); opacity: .4; } 50% { transform: translateY(-4px); opacity: 1; } }
-
-/* Tool call card: Running… → Done, its border lights up when done */
-.tool {
-  display: flex; align-items: center; gap: 10px;
-  padding: 8px 12px;
-  border: 1px solid var(--glass-edge); border-radius: 10px;
-  background: var(--glass), rgba(28, 28, 28, 0.86);
-  box-shadow: var(--glass-light);
-  -webkit-backdrop-filter: blur(14px) saturate(140%);
-  backdrop-filter: blur(14px) saturate(140%);
-  font-size: 12px;
-  transition: border-color .3s ease;
-  animation: enter .45s var(--spring) both;
-}
-.tool-icon { flex: none; width: 14px; height: 14px; fill: none; stroke: var(--muted); stroke-width: 2; stroke-linecap: round; stroke-linejoin: round; transition: stroke .3s ease; }
-.tool-name { font-family: var(--font); }
-.tool-arg { min-width: 0; color: var(--muted); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.tool-state { margin-left: auto; padding-left: 8px; color: var(--muted); white-space: nowrap; transition: color .3s ease; }
-.tool.is-done { border-color: var(--chat-accent); }
-.tool.is-done .tool-icon { stroke: var(--chat-accent); }
-.tool.is-done .tool-state { color: var(--chat-accent); }
-.tool.is-failed .tool-state { color: var(--fg); }
 
 .cursor::after { content: "▍"; animation: blink 1s steps(1) infinite; margin-left: 2px; }
 @keyframes blink { 50% { opacity: 0; } }
@@ -428,19 +390,19 @@ body:not(.is-chatting) .turn-head { display: none; }
   width: 100%;
   max-width: var(--ask-fit, none);   /* on the landing page: as wide as its text (app.js), the full width once chatting */
   display: flex; align-items: flex-end; gap: 8px;
-  padding: 6px 6px 6px 18px;
-  border: 1px solid var(--chat-edge); border-radius: 24px;
-  background: var(--chat-surface);
+  padding: 6px 6px 6px 16px;
+  border: 1px solid rgba(255, 255, 255, 0.12); border-radius: 18px;
+  background: #222222;
   transition: border-color .25s ease;
 }
 .ask:focus-within { border-color: var(--muted); }
 .ask textarea {
   flex: 1; min-width: 0;
-  /* Grows with all its text (400 characters at most), never a scrollbar */
-  min-height: 44px;
-  padding: 10px 0; margin: 0;
-  resize: none; overflow: hidden;
-  scrollbar-width: none;
+  /* One line at first, grows with the text up to 30% of the screen, then scrolls inside */
+  min-height: 44px; max-height: max(132px, 30vh);
+  padding: 11px 0; margin: 0;
+  resize: none; overflow-y: hidden;    /* app.js lets it scroll once the field is at its tallest */
+  scrollbar-width: thin;
   background: none; border: 0; color: var(--fg);
   font: inherit; line-height: 1.5;
 }
@@ -596,7 +558,7 @@ body:not(.is-chatting) .turn-head { display: none; }
 .stage { min-width: 0; animation: rise .35s ease; }
 @keyframes rise { from { opacity: 0; transform: translateY(8px); } }
 @media (prefers-reduced-motion: reduce) {
-  .stage, .msg-user, .turn, .tool, .reply .w, .sparkle, .dots i, .caret, .cursor::after, .dd-panel, .presence { animation: none !important; }
+  .stage, .msg-user, .turn, .reply .w, .sparkle, .pending, .reply.is-draft .draft-unit, .caret, .cursor::after, .dd-panel, .presence { animation: none !important; }
   .avatar, .avatar-btn { transition: none !important; }
 }
 .stage-bar {
@@ -695,7 +657,7 @@ body:not(.is-chatting) .turn-head { display: none; }
 }
 
 /* Readable, safely rendered assistant responses. */
-.reply p { margin: 0 0 .8em; }
+.reply p { margin: 0 0 1em; }
 .reply p:last-child { margin-bottom: 0; }
 .reply h3 { font: inherit; font-weight: 700; margin: 1em 0 .5em; }
 .reply h3:first-child { margin-top: 0; }

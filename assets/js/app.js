@@ -85,7 +85,18 @@
     document.body.classList.toggle('is-talking', m === 'talking');
     if (window.TravisAvatar) TravisAvatar.setMood(m || (document.body.classList.contains('is-listening') ? 'listening' : 'idle'));
   }
-  function scrollLog() { log.scrollTop = log.scrollHeight; }
+  // Follows the newest text, but never scrolls past the visitor's question: a long reply keeps
+  // its beginning in view while it streams (Michael, 2026-10-20)
+  function scrollLog() {
+    const bottom = log.scrollHeight - log.clientHeight;
+    const anchor = turn && turn.previousElementSibling && turn.previousElementSibling.classList.contains('msg-user') ? turn.previousElementSibling : turn;
+    if (!anchor) { log.scrollTop = bottom; return; }
+    const top = log.scrollTop + anchor.getBoundingClientRect().top - log.getBoundingClientRect().top - 8;
+    log.scrollTop = Math.min(bottom, Math.max(0, top));
+  }
+  // Screen readers hear the waiting line and each finished reply once, never each word as it streams
+  const sr = $('#sr-status');
+  function announce(text) { if (sr) { sr.textContent = ''; sr.textContent = String(text || '').replace(/\*\*|[#*_`]/g, ''); } }
   // Fade the top edge once there is something scrolled out of view above
   log.addEventListener('scroll', () => log.classList.toggle('is-scrolled', log.scrollTop > 4), { passive: true });
   const wait = (ms) => new Promise((r) => setTimeout(r, reduced ? 0 : ms));
@@ -117,10 +128,8 @@
   }
   function think() {
     ensureTurn();
-    thinking = el('div', { class: 'dots' }, [
-      el('span', { class: 'visually-hidden', text: UI().thinking }),
-      el('i'), el('i'), el('i')
-    ]);
+    thinking = el('p', { class: 'pending', text: UI().preparing });
+    announce(UI().preparing);
     turn.append(thinking);
     turn.classList.add('is-thinking');   // the sparkle spins
     mood('thinking');
@@ -132,7 +141,7 @@
   function stream(node, text) {
     const complete = () => window.TravisRichText ? TravisRichText.render(node, text) : (node.textContent = text);
     const run = ++typing;
-    if (reduced || !text) { complete(); scrollLog(); if (run === typing) mood(null); return Promise.resolve(); }
+    if (reduced || !text) { complete(); scrollLog(); announce(text); if (run === typing) mood(null); return Promise.resolve(); }
     mood('talking');
     const parts = text.split(/(\s+)/);
     const words = parts.filter((w) => w.trim()).length || 1;
@@ -141,13 +150,14 @@
     node.append(caret);
     return new Promise((resolve) => {
       let i = 0;
-      const finish = () => { complete(); scrollLog(); if (run === typing) mood(null); resolve(); };
+      const finish = () => { complete(); scrollLog(); announce(text); if (run === typing) mood(null); resolve(); };
       node.addEventListener('click', () => { i = parts.length; }, { once: true });
       (function tick() {
         if (!node.isConnected) return resolve();
         if (i >= parts.length) return finish();
         const w = parts[i++];
-        node.insertBefore(/^\s+$/.test(w) ? document.createTextNode(w) : el('span', { class: 'w', text: w }), caret);
+        // the bold markers are not typed: the finished reply renders them as bold
+        node.insertBefore(/^\s+$/.test(w) ? document.createTextNode(w) : el('span', { class: 'w', text: w.replace(/\*\*/g, '') }), caret);
         scrollLog();
         if (/^\s+$/.test(w)) return tick();
         setTimeout(tick, per);
@@ -170,7 +180,7 @@
   // The answer being written (streamed): its units in grey as they come, then replaced by the
   // verified answer (Michael, 2026-10-20: the visitor doesn't wait for the whole verification)
   function draft() {
-    const node = el('div', { class: 'reply is-draft', 'aria-live': 'polite' });
+    const node = el('div', { class: 'reply is-draft', 'aria-hidden': 'true' });   // provisional: not announced
     const note = el('p', { class: 'draft-state', text: UI().verifying });
     return {
       add(text) {
@@ -190,28 +200,12 @@
     link: (a) => ['open_link', (a.url || '').replace(/^https:\/\//, '')],
     close: () => ['close_project', '']
   };
+  // An action or the model's work: it runs (at least PACE.tool), with no technical card on screen
+  // (Michael, 2026-10-20: no model_computing / Running… / Done panel)
   function tool(name, arg, fn) {
-    const stateEl = el('span', { class: 'tool-state', text: UI().toolRunning });
-    const card = el('div', { class: 'tool is-running' }, [
-      svg(BRACKETS, 'tool-icon'),
-      el('span', { class: 'tool-name', text: name }),
-      el('span', { class: 'tool-arg', text: arg || '' }),
-      stateEl
-    ]);
-    ensureTurn().append(card);
-    scrollLog();
     const job = (async () => {
-      try {
-        const [out] = await Promise.all([fn ? fn() : undefined, wait(PACE.tool)]);
-        card.classList.replace('is-running', 'is-done');
-        stateEl.textContent = UI().toolDone;
-        await wait(PACE.afterTool);
-        return out;
-      } catch (e) {
-        card.classList.replace('is-running', 'is-failed');
-        stateEl.textContent = UI().toolFail;
-        throw e;
-      }
+      const [out] = await Promise.all([fn ? fn() : undefined, wait(PACE.tool)]);
+      return out;
     })();
     pending = Promise.all([pending, job.catch(() => {})]);
     return job;
@@ -558,6 +552,8 @@
       if (empty) input.value = input.placeholder;
       input.style.height = 'auto';
       input.style.height = input.scrollHeight + 'px';
+      // a scroll bar only once the field is at its tallest (CSS max-height)
+      input.style.overflowY = input.scrollHeight > input.clientHeight + 2 ? 'auto' : 'hidden';
       if (empty) input.value = '';
       form.classList.toggle('is-empty', !input.value.trim());
     };
