@@ -7,8 +7,11 @@
 (function () {
   const FACE = 0.76;         // the silhouette's longest side, as a share of the circle
   const STEP = 1.5;          // sampling grid on screen, in CSS px: smaller = denser face
-  const DOT = 1.35;          // dot size on screen, in CSS px
+  const DOT = 1.6;           // dot size on screen, in CSS px
   const COLOR = '#FFFFFF';   // as white as the image
+  // Each dot has a soft halo, and light adds up where dots meet: the field glows (Mike,
+  // 2026-10-20: the dots must be white and much brighter). HALO: its size, as a multiple of a dot
+  const HALO = 3, HALO_ALPHA = 0.18;
   const FADE = 260;          // ms to cross-fade between image and dots
   const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -92,9 +95,14 @@
         ctx.drawImage(source, face.x, face.y, face.w, face.h);
       }
       if (blend > 0) {
-        ctx.globalAlpha = blend;
+        ctx.globalCompositeOperation = 'lighter';
         ctx.fillStyle = COLOR;
+        const h = dot * HALO, o = (h - dot) / 2;
+        ctx.globalAlpha = blend * HALO_ALPHA;
+        for (const p of particles) ctx.fillRect(p.x - o, p.y - o, h, h);
+        ctx.globalAlpha = blend;
         for (const p of particles) ctx.fillRect(p.x, p.y, dot, dot);
+        ctx.globalCompositeOperation = 'source-over';
       }
       ctx.globalAlpha = 1;
     }

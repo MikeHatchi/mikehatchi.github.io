@@ -257,7 +257,7 @@
   // on phones the links (GitHub, LinkedIn, Discord) and the footer join them
   const phone = window.matchMedia('(max-width: 900px)');
   // (in the menu's order: projects and the glass bar, the links, the language, the footer)
-  const movable = [['.glassnav', true], ['.socials', false], ['.topnav', true], ['.footer', false]].map(([sel, always]) => {
+  const movable = [['.glassnav', true], ['.socials', false], ['.topnav', false], ['.footer', false]].map(([sel, always]) => {
     const n = document.querySelector(sel); return { n, always, parent: n.parentNode, next: n.nextSibling };
   });
   function placeMenu() {
