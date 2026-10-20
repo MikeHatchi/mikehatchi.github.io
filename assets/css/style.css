@@ -17,7 +17,7 @@
   --track-sm: 0.06em;    /* small meta text, footer */
   --gutter: clamp(16px, 3vw, 40px);  /* side margins, as on omystik.org */
   --travis-col: 380px;
-  --avatar-size: 240px;   /* the avatar on the landing page */
+  --avatar-size: min(240px, 34svh);   /* the avatar on the landing page: smaller on short screens, so the page fits */
   --avatar-gap: 64px;     /* space between the avatar and the chat on its right */
 }
 
@@ -27,8 +27,12 @@
 html { scroll-behavior: smooth; }
 @media (prefers-reduced-motion: reduce) { html { scroll-behavior: auto; } }
 
+/* The page is the screen's height (Mike, 2026-10-20: no scroll bar on arrival, on desktop and
+   phones): the top bar, the stage taking the height left, the footer; only a project scrolls */
 body {
   margin: 0;
+  min-height: 100svh; min-height: 100dvh;
+  display: flex; flex-direction: column;
   background: var(--bg);
   color: var(--fg);
   font: 400 16px/1.65 var(--font);
@@ -167,11 +171,11 @@ a.menu-item { text-decoration: none; }
 /* ── STAGE WRAP ─────────────────────────────────────── */
 .stagewrap {
   position: relative;
-  min-height: calc(100svh - 84px);
+  flex: 1 0 auto;
   display: grid;
   grid-template-columns: minmax(0, 1fr);
   place-items: center;
-  padding: 24px var(--gutter) 96px;
+  padding: 16px var(--gutter) 24px;
 }
 
 /* Travis = presence (avatar, name) + chat. Landing page: the avatar alone at
@@ -633,7 +637,7 @@ body:not(.is-chatting) .turn-head { display: none; }
 .timeline a:hover, .timeline a:focus-visible { text-decoration: none; }
 
 /* As on omystik.org: centred, small, letter-spaced */
-.footer { max-width: 1200px; margin: 0 auto; padding: 40px var(--gutter); text-align: center; font-size: 13px; letter-spacing: var(--track-sm); color: var(--fg); }
+.footer { width: 100%; max-width: 1200px; margin: 0 auto; padding: 12px var(--gutter) 16px; text-align: center; font-size: 13px; letter-spacing: var(--track-sm); color: var(--fg); }
 .footer p { margin: 0 0 6px; }
 .noscript { padding: 24px; }
 
@@ -644,12 +648,12 @@ body:not(.is-chatting) .turn-head { display: none; }
   .topbar { display: flex; align-items: center; padding: 8px 12px; font-size: 12px; }
   .menu-panel { position: fixed; top: 72px; left: 12px; right: 12px; width: auto; max-height: calc(100dvh - 84px); }
   .sep { display: none; }
-  .stagewrap { padding: 16px 16px 88px; }
+  .stagewrap { padding: 16px 16px 24px; }
   /* Phone: one column, the chat below the avatar */
   .travis { flex-direction: column; gap: 20px; }
   .chat { flex: none; width: 100%; }
   .is-chatting .stagewrap { place-items: start center; }
-  .avatar { width: min(72vw, 200px); height: min(72vw, 200px); }
+  .avatar { width: min(72vw, 200px, 26svh); height: min(72vw, 200px, 26svh); }
   .is-chatting .avatar { width: 112px; height: 112px; }
   body.is-chatting:not(.is-presenting) .avatar { width: min(88vw, 320px); height: min(88vw, 320px); }
   /* Chatting on a phone: the chat takes the whole screen under the menu, the answers scroll in
