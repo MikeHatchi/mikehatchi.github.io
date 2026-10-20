@@ -163,24 +163,48 @@
     // Shown in the chat as a tool call: model_computing Workers AI … DONE (or FAILED, and
     // local mode answers). No answer within CFG.agentTimeoutMs (the Worker's response
     // window plus a margin): it counts as failed.
+    // Streamed: the Worker sends one JSON line per event; the units come in grey as they are
+    // written, the verified answer replaces them. Silence for CFG.agentTimeoutMs, or more than
+    // 95 s in all, counts as failed.
+    const d = ctx.draft ? ctx.draft() : null;
     const out = await ctx.tool('model_computing', 'Workers AI', async () => {
       const ctrl = new AbortController();
-      const timer = setTimeout(() => ctrl.abort(), CFG.agentTimeoutMs || 20000);
+      let timer = setTimeout(() => ctrl.abort(), CFG.agentTimeoutMs || 20000);
+      const alive = () => { clearTimeout(timer); timer = setTimeout(() => ctrl.abort(), CFG.agentTimeoutMs || 20000); };
+      const cap = setTimeout(() => ctrl.abort(), 95000);
       try {
         const res = await fetch(CFG.agentEndpoint, {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ messages: history.slice(-12), lang: ctx.lang }),
+          body: JSON.stringify({ messages: history.slice(-12), lang: ctx.lang, stream: Boolean(d) }),
           signal: ctrl.signal
         });
         if (!res.ok) throw new Error('agent ' + res.status);
-        const json = await res.json();
+        let json;
+        if (d && /ndjson/.test(res.headers.get('Content-Type') || '')) {
+          const reader = res.body.getReader(), dec = new TextDecoder();
+          let buffer = '';
+          for (;;) {
+            const { value, done } = await reader.read();
+            if (done) break;
+            alive();
+            buffer += dec.decode(value, { stream: true });
+            let i;
+            while ((i = buffer.indexOf('\n')) >= 0) {
+              const line = buffer.slice(0, i).trim(); buffer = buffer.slice(i + 1);
+              if (!line) continue;
+              let e; try { e = JSON.parse(line); } catch (err) { continue; }
+              if (e.type === 'unit' && typeof e.text === 'string') d.add(e.text);
+              else if (e.type === 'final') json = e;
+            }
+          }
+        } else json = await res.json();
         if (!json || typeof json.text !== 'string' || !json.text.trim()) throw new Error('agent empty');
         return json;
       } finally {
-        clearTimeout(timer);
+        clearTimeout(timer); clearTimeout(cap);
       }
-    });
+    }).finally(() => { if (d) d.clear(); });
     for (const a of out.actions || []) ctx.act(a);
     return ctx.say(String(out.text || ''), { chips: out.chips || chipsFor(ctx.lang, 'after') });
   }

@@ -7,11 +7,12 @@
 (function () {
   const FACE = 0.76;         // the silhouette's longest side, as a share of the circle
   const STEP = 1.5;          // sampling grid on screen, in CSS px: smaller = denser face
-  const DOT = 1.6;           // dot size on screen, in CSS px
+  const DOT = 1.35;          // dot size on screen, in CSS px
   const COLOR = '#FFFFFF';   // as white as the image
-  // Each dot has a soft halo, and light adds up where dots meet: the field glows (Mike,
-  // 2026-10-20: the dots must be white and much brighter). HALO: its size, as a multiple of a dot
-  const HALO = 3, HALO_ALPHA = 0.18;
+  // Bright but fine (Michael, 2026-10-20: big dots with a halo made a white blob): each dot is
+  // drawn on whole screen pixels, so it is fully white instead of grey across two half-lit pixels,
+  // with a one-pixel rim at GLOW, light adding up where dots meet
+  const GLOW = 0.12;
   const FADE = 260;          // ms to cross-fade between image and dots
   const reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
 
@@ -32,10 +33,18 @@
     const canvas = document.createElement('canvas');
     canvas.className = img.className;
     canvas.setAttribute('aria-hidden', 'true');
-    canvas.width = canvas.height = Math.round(SIZE * Math.min(window.devicePixelRatio || 1, 2));
+    const ratio = Math.min(window.devicePixelRatio || 1, 2);
+    canvas.width = canvas.height = Math.round(SIZE * ratio);
     const ctx = canvas.getContext('2d');
     if (!ctx) return null;
-    ctx.scale(canvas.width / SIZE, canvas.height / SIZE);
+    // The canvas is redrawn at the size it is shown (240 px on the landing page, 420 behind the chat…),
+    // never scaled by the browser: a scaled canvas turns the dots grey
+    let cssWidth = SIZE;                                   // its width on screen, in CSS px
+    new ResizeObserver(() => {
+      const css = canvas.getBoundingClientRect().width, w = Math.round(css * ratio);
+      if (css > 0) cssWidth = css;
+      if (w > 0 && w !== canvas.width) { canvas.width = canvas.height = w; if (face) draw(); }
+    }).observe(canvas);
 
     const source = new Image();
     source.src = img.currentSrc || img.src;
@@ -44,7 +53,6 @@
     // keep the same spacing on screen, so a smaller avatar needs fewer dots
     const shown = img.getBoundingClientRect().width || SIZE;
     const grid = Math.max(STEP, (STEP * SIZE) / shown);
-    const dot = (DOT * grid) / STEP;
 
     let face = null;         // where the image is drawn: x, y, w, h
     let particles = [];
@@ -89,19 +97,25 @@
     }
 
     function draw() {
-      ctx.clearRect(0, 0, SIZE, SIZE);
+      const s = canvas.width / SIZE;                      // canvas pixels per drawing unit
+      ctx.setTransform(1, 0, 0, 1, 0, 0);
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
       if (blend < 1) {
         ctx.globalAlpha = 1 - blend;
+        ctx.setTransform(s, 0, 0, s, 0, 0);
         ctx.drawImage(source, face.x, face.y, face.w, face.h);
+        ctx.setTransform(1, 0, 0, 1, 0, 0);
       }
       if (blend > 0) {
+        // in whole canvas pixels, rounded down so the dots never touch (the grid is 1.5 CSS px):
+        // at a ratio of 2, 2 px dots 3 px apart; the rim lights the gap between them
+        const d = Math.max(1, Math.floor(DOT * canvas.width / cssWidth));
         ctx.globalCompositeOperation = 'lighter';
         ctx.fillStyle = COLOR;
-        const h = dot * HALO, o = (h - dot) / 2;
-        ctx.globalAlpha = blend * HALO_ALPHA;
-        for (const p of particles) ctx.fillRect(p.x - o, p.y - o, h, h);
+        ctx.globalAlpha = blend * GLOW;
+        for (const p of particles) ctx.fillRect(Math.round(p.x * s) - 1, Math.round(p.y * s) - 1, d + 2, d + 2);
         ctx.globalAlpha = blend;
-        for (const p of particles) ctx.fillRect(p.x, p.y, dot, dot);
+        for (const p of particles) ctx.fillRect(Math.round(p.x * s), Math.round(p.y * s), d, d);
         ctx.globalCompositeOperation = 'source-over';
       }
       ctx.globalAlpha = 1;

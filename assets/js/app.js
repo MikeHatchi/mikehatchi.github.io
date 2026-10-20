@@ -167,6 +167,21 @@
     });
   }
 
+  // The answer being written (streamed): its units in grey as they come, then replaced by the
+  // verified answer (Michael, 2026-10-20: the visitor doesn't wait for the whole verification)
+  function draft() {
+    const node = el('div', { class: 'reply is-draft', 'aria-live': 'polite' });
+    const note = el('p', { class: 'draft-state', text: UI().verifying });
+    return {
+      add(text) {
+        if (!node.isConnected) { ensureTurn().append(node); node.append(note); mood('talking'); }
+        node.insertBefore(el('p', { class: 'draft-unit', text }), note);
+        scrollLog();
+      },
+      clear() { node.remove(); }
+    };
+  }
+
   // A tool-call card: Running… while fn runs (at least PACE.tool), then Done or Failed
   const TOOL = {
     open: (a) => ['open_project', DATA.projects[a.id] && DATA.projects[a.id].title],
@@ -257,7 +272,8 @@
   // on phones the links (GitHub, LinkedIn, Discord) and the footer join them
   const phone = window.matchMedia('(max-width: 900px)');
   // (in the menu's order: projects and the glass bar, the links, the language, the footer)
-  const movable = [['.glassnav', true], ['.socials', false], ['.topnav', false], ['.footer', false]].map(([sel, always]) => {
+  // FR / EN stays in the top bar, on the right, on every screen (Michael, 2026-10-20)
+  const movable = [['.glassnav', true], ['.socials', false], ['.footer', false]].map(([sel, always]) => {
     const n = document.querySelector(sel); return { n, always, parent: n.parentNode, next: n.nextSibling };
   });
   function placeMenu() {
@@ -286,7 +302,7 @@
       // With the live model, its own response time is the thinking
       await wait(CFG.agentEndpoint ? 400 : PACE.thinking);
       await Travis.respond(query, state.history, {
-        lang: state.lang, say, act, tool,
+        lang: state.lang, say, act, tool, draft,
         latestNews: () => (state.news[0] ? { ...state.news[0], text: newsText(state.news[0]) } : null)
       });
     } finally {
