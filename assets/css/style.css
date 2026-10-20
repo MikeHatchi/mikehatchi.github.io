@@ -241,6 +241,9 @@ body.is-chatting:not(.is-presenting) .travis-name { display: none; }
 /* Landing page (wider than a phone): the chat is taken out of the row, so the
    avatar alone is centred; the chat sits on its right, level with its middle. */
 @media (min-width: 901px) {
+  /* the avatar's centre at 45% of the screen's height, not lower (Mike, 2026-10-20): placed, not
+     centred in what the top bar and the footer leave */
+  body:not(.is-chatting):not(.is-presenting) .stagewrap { place-items: start center; padding-top: max(16px, calc(45svh - 96px - var(--avatar-size) / 2)); }
   body:not(.is-chatting):not(.is-presenting) .travis { position: relative; }
   /* the name hangs under the avatar without counting in its height, so the
      avatar itself, not avatar + name, is what sits at the centre */
@@ -411,6 +414,7 @@ body:not(.is-chatting) .turn-head { display: none; }
    with a round send button, in the style of the chat bubbles */
 .ask {
   width: 100%;
+  max-width: var(--ask-fit, none);   /* on the landing page: as wide as its text (app.js), the full width once chatting */
   display: flex; align-items: flex-end; gap: 8px;
   padding: 6px 6px 6px 18px;
   border: 1px solid var(--chat-edge); border-radius: 24px;
@@ -638,7 +642,7 @@ body:not(.is-chatting) .turn-head { display: none; }
 
 /* As on omystik.org: centred, small, letter-spaced */
 .footer { width: 100%; max-width: 1200px; margin: 0 auto; padding: 12px var(--gutter) 16px; text-align: center; font-size: 13px; letter-spacing: var(--track-sm); color: var(--fg); }
-.footer p { margin: 0 0 6px; }
+.footer p { margin: 0 0 6px; color: var(--muted); }   /* both lines in the copyright's grey (Mike) */
 .noscript { padding: 24px; }
 
 /* ── PHONE ───────────────────────────────────────────── */

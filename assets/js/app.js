@@ -519,8 +519,24 @@
     $('#avatar-btn').addEventListener('click', () => $('#ask-input').focus());
     const input = $('#ask-input');
     const form = $('#ask');
+    // On the landing page the field is as wide as its text, the placeholder when empty (Mike,
+    // 2026-10-20: the empty bubble was too long); once chatting it takes the full width
+    const ruler = document.createElement('canvas').getContext('2d');
+    const fitWidth = () => {
+      if (document.body.classList.contains('is-chatting') || document.body.classList.contains('is-presenting')) { form.style.removeProperty('--ask-fit'); return; }
+      const cs = getComputedStyle(input);
+      let size = cs.fontSize;
+      if (!input.value) { try { size = getComputedStyle(input, '::placeholder').fontSize || size; } catch (e) { /* the field's size */ } }
+      ruler.font = `${cs.fontWeight} ${size} ${cs.fontFamily}`;
+      const text = Math.max(...(input.value || input.placeholder).split('\n').map((l) => ruler.measureText(l).width));
+      const fs = getComputedStyle(form), send = form.querySelector('.send');
+      const frame = ['paddingLeft', 'paddingRight', 'borderLeftWidth', 'borderRightWidth'].reduce((n, k) => n + parseFloat(fs[k] || 0), 0)
+        + (parseFloat(fs.columnGap) || 0) + (send ? send.offsetWidth : 44) + 6;
+      form.style.setProperty('--ask-fit', Math.ceil(text + frame) + 'px');
+    };
     // The field grows with its text (and fits the whole placeholder when empty)
     const fit = () => {
+      fitWidth();
       const empty = !input.value;
       if (empty) input.value = input.placeholder;
       input.style.height = 'auto';
@@ -529,6 +545,9 @@
       form.classList.toggle('is-empty', !input.value.trim());
     };
     input.addEventListener('input', () => { fit(); listen(input.value.trim().length > 0); });
+    // the width changes with the page's state and the font once it has loaded (the screen: below)
+    new MutationObserver(fit).observe(document.body, { attributes: true, attributeFilter: ['class'] });
+    if (document.fonts) document.fonts.ready.then(fit);
     input.addEventListener('blur', () => listen(false));
     // Enter sends, Shift+Enter starts a new line
     input.addEventListener('keydown', (e) => {

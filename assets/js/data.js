@@ -3,14 +3,14 @@
    Images: src is what the page shows; optional full is the file opened by "Open in full size". */
 window.TRAVIS_DATA = {
   profile: {
-    name: 'Mike Hatchi',
+    name: 'Michael John Hatchi',
     role: {
       en: 'ML/DL & R&D engineer · distributed systems & confidential computing (FHE)',
       fr: 'Ingénieur ML/DL & R&D · systèmes distribués & calcul confidentiel (FHE)'
     },
     bio: {
-      en: 'Mike is an ML/DL and R&D engineer. From 2020 to 2025 he ran VRONA, his own company, building machine learning models and decentralized apps in clear or encrypted contexts. Today he builds ØMYSTIK, an open-source FHE peer-to-peer mesh in Rust.',
-      fr: 'Mike est ingénieur ML/DL et R&D. De 2020 à 2025, il a dirigé VRONA, sa propre société, qui développait des modèles de machine learning et des applications décentralisées, en clair ou chiffrées. Il construit aujourd\'hui ØMYSTIK, un maillage pair-à-pair FHE open source écrit en Rust.'
+      en: 'Michael is an ML/DL and R&D engineer. From 2020 to 2025 he ran VRONA, his own company, building machine learning models and decentralized apps in clear or encrypted contexts. Today he builds ØMYSTIK, an open-source FHE peer-to-peer mesh in Rust.',
+      fr: 'Michael est ingénieur ML/DL et R&D. De 2020 à 2025, il a dirigé VRONA, sa propre société, qui développait des modèles de machine learning et des applications décentralisées, en clair ou chiffrées. Il construit aujourd\'hui ØMYSTIK, un maillage pair-à-pair FHE open source écrit en Rust.'
     },
     looking: {
       en: 'He is looking for a role as ML/Deep Learning or R&D engineer in distributed systems and confidential computing.',
@@ -140,8 +140,8 @@ window.TRAVIS_DATA = {
         fr: 'Une IA d\'échecs dont les entrées (les coups) sont chiffrées par chiffrement entièrement homomorphe.'
       },
       result: {
-        en: 'Public repository; Mike\'s earliest work combining deep learning and FHE.',
-        fr: 'Dépôt public ; le premier travail de Mike combinant deep learning et FHE.'
+        en: 'Public repository; Michael\'s earliest work combining deep learning and FHE.',
+        fr: 'Dépôt public ; le premier travail de Michael combinant deep learning et FHE.'
       },
       lineage: {
         en: 'Source of the "deep learning under FHE" line on the ØMYSTIK roadmap.',
@@ -192,8 +192,8 @@ window.TRAVIS_DATA = {
         fr: 'DDPG avec un acteur-critique asymétrique, au volant d\'une Porsche 911 GT3 R sur le circuit de Catalunya dans Project CARS 2. Entraîné sur une machine GPU Azure.'
       },
       result: {
-        en: 'Capstone of Udacity\'s Machine Learning Engineer nanodegree (MLE-ND), on a free subject. Mike set the bar very high, drawing on research papers for a solution of his own that mixes concepts, with a published write-up.',
-        fr: 'Projet final du nanodegree Machine Learning Engineer d\'Udacity (MLE-ND), au sujet libre. Mike a placé la barre très haut, en s\'appuyant sur des articles de recherche pour une solution de sa conception qui mêle plusieurs concepts, avec une publication.'
+        en: 'Capstone of Udacity\'s Machine Learning Engineer nanodegree (MLE-ND), on a free subject. Michael set the bar very high, drawing on research papers for a solution of his own that mixes concepts, with a published write-up.',
+        fr: 'Projet final du nanodegree Machine Learning Engineer d\'Udacity (MLE-ND), au sujet libre. Michael a placé la barre très haut, en s\'appuyant sur des articles de recherche pour une solution de sa conception qui mêle plusieurs concepts, avec une publication.'
       },
       lineage: null,
       links: [
