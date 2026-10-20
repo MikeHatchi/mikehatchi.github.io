@@ -5,16 +5,17 @@ window.TRAVIS_DATA = {
   profile: {
     name: 'Michael John Hatchi',
     role: {
-      en: 'ML/DL & R&D engineer · distributed systems & confidential computing (FHE)',
-      fr: 'Ingénieur ML/DL & R&D · systèmes distribués & calcul confidentiel (FHE)'
+      // Michael's own wording (2026-10-20)
+      en: 'R&D Engineer - ML/DL, Distributed Systems, Confidential Computing (FHE)',
+      fr: 'Ingénieur R&D - ML/DL, systèmes distribués, calcul confidentiel (FHE)'
     },
     bio: {
-      en: 'Michael is an ML/DL and R&D engineer. From 2020 to 2025 he ran VRONA, his own company, building machine learning models and decentralized apps in clear or encrypted contexts. Today he builds ØMYSTIK, an open-source FHE peer-to-peer mesh in Rust.',
-      fr: 'Michael est ingénieur ML/DL et R&D. De 2020 à 2025, il a dirigé VRONA, sa propre société, qui développait des modèles de machine learning et des applications décentralisées, en clair ou chiffrées. Il construit aujourd\'hui ØMYSTIK, un maillage pair-à-pair FHE open source écrit en Rust.'
+      en: 'Michael is an R&D engineer in ML/DL, distributed systems and confidential computing (FHE). From 2020 to 2025 he ran VRONA, his own company, building machine learning models and decentralized apps in clear or encrypted contexts. Today he builds ØMYSTIK, an open-source FHE peer-to-peer mesh in Rust.',
+      fr: 'Michael est ingénieur R&D en ML/DL, systèmes distribués et calcul confidentiel (FHE). De 2020 à 2025, il a dirigé VRONA, sa propre société, qui développait des modèles de machine learning et des applications décentralisées, en clair ou chiffrées. Il construit aujourd\'hui ØMYSTIK, un maillage pair-à-pair FHE open source écrit en Rust.'
     },
     looking: {
-      en: 'He is looking for a role as ML/Deep Learning or R&D engineer in distributed systems and confidential computing.',
-      fr: 'Il recherche un poste d\'ingénieur ML/Deep Learning ou R&D en systèmes distribués et calcul confidentiel.'
+      en: 'He is looking for a role as an R&D engineer in ML/DL, distributed systems and confidential computing.',
+      fr: 'Il recherche un poste d\'ingénieur R&D en ML/DL, systèmes distribués et calcul confidentiel.'
     }
   },
 
