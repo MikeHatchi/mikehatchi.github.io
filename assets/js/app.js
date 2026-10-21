@@ -338,6 +338,7 @@
     renderProject(id);
     stage.hidden = false;
     document.body.classList.add('is-presenting');
+    $('#stage-hint').hidden = false;
     try { history.replaceState(null, '', '#/work/' + id); } catch (e) { /* ignore */ }
     window.scrollTo({ top: 0, behavior: reduced ? 'auto' : 'smooth' });
   }
@@ -345,11 +346,15 @@
     state.openId = null;
     stage.hidden = true;
     document.body.classList.remove('is-presenting');
+    $('#stage-hint').hidden = true;
     try { history.replaceState(null, '', location.pathname + location.search); } catch (e) { /* ignore */ }
     renderChips(Travis.chipsFor(state.lang, 'after'));
   }
 
+  // Phones: the chat fills the screen, the project's page is below it; this button says so and goes there
+  $('#stage-hint').addEventListener('click', () => stage.scrollIntoView({ behavior: reduced ? 'auto' : 'smooth', block: 'start' }));
   function renderProject(id) {
+    if (DATA.projects[id]) $('#stage-hint').textContent = UI().seeProject(DATA.projects[id].title);
     const p = DATA.projects[id];
     const ui = UI();
     $('#stage-crumb').textContent = `${ui.work} / ${p.title}`;

@@ -230,6 +230,7 @@ body.is-chatting:not(.is-presenting) .chat { flex: 0 1 740px; max-width: 740px; 
   body.is-chatting:not(.is-presenting) .log { max-height: calc(100svh - 330px); min-height: 240px; }
 }
 .chips:empty { display: none; }
+.stage-hint { display: none; align-self: center; align-items: center; min-height: 44px; padding: 0 12px; background: none; border: 0; color: var(--fg); cursor: pointer; font: inherit; font-size: 12px; letter-spacing: var(--track); text-transform: uppercase; }
 .is-chatting .avatar { width: 200px; height: 200px; }
 
 /* Chatting: the avatar sits centred behind the chat, blurred. Its size, blur and
@@ -244,15 +245,17 @@ body.is-chatting:not(.is-presenting) .presence {
 body.is-chatting:not(.is-presenting) .chat { position: relative; z-index: 1; }
 body.is-chatting:not(.is-presenting) .avatar {
   width: 420px; height: 420px;
-  filter: blur(8px); opacity: .35;
+  filter: blur(8px); opacity: .22;     /* at rest, quieter than the text (Michael, 2026-10-21) */
   border-color: transparent;
 }
 body.is-chatting:not(.is-presenting) .travis-name { display: none; }
 /* while Travis thinks or talks, the dots behind the chat light up: nearly sharp and bright (Michael,
    2026-10-20: blurred, the dots spread into grey); the bubbles keep their own background */
 body.is-chatting:not(.is-presenting).is-thinking .avatar, body.is-chatting:not(.is-presenting).is-talking .avatar { opacity: .85; filter: blur(1.5px); }
-/* while Travis prepares his reply, the same blur as while the visitor types (Michael, 2026-10-20) */
+/* while Travis prepares his reply, the same blur as while the visitor types (Michael, 2026-10-20);
+   while the reply is written over it, blurred and dimmer, so the text stays ahead (2026-10-21) */
 body.is-chatting:not(.is-presenting).is-thinking .avatar { filter: blur(8px); }
+body.is-chatting:not(.is-presenting).is-talking .avatar { filter: blur(8px); opacity: .45; }
 body.is-chatting:not(.is-presenting) .avatar { transition: width .6s ease, height .6s ease, border-color .3s ease, opacity .4s ease, filter .4s ease; }
 @keyframes behind { from { opacity: 0; } }
 
@@ -644,11 +647,19 @@ body:not(.is-chatting) .turn-head { display: none; }
   body.is-chatting:not(.is-presenting) .travis { height: calc(100svh - 84px); height: calc(100dvh - 84px); }
   body.is-chatting:not(.is-presenting) .chat { flex: 1 1 auto; min-height: 0; }
   body.is-chatting:not(.is-presenting) .log { flex: 1 1 auto; min-height: 0; max-height: none; }
-  .is-presenting .stagewrap { grid-template-columns: minmax(0, 1fr); padding: 16px 16px 40px; gap: 24px; }
-  .is-presenting .stage, .is-presenting .travis { order: 0; }   /* phones: Travis above the project, as before */
-  .is-presenting .travis { position: static; }
-  .is-presenting .avatar { width: 72px; height: 72px; }
-  .is-presenting .log { max-height: 28vh; }
+  /* A project open on a phone (Michael, 2026-10-21): the chat fills the screen as in a conversation,
+     the avatar blurred behind it; the project's page follows, and a button below the field leads there */
+  .is-presenting .stagewrap { grid-template-columns: minmax(0, 1fr); padding: 0 12px 40px; gap: 24px; }
+  .is-presenting .stage, .is-presenting .travis { order: 0; }
+  .is-presenting .travis { position: relative; top: auto; height: calc(100svh - 128px); height: calc(100dvh - 128px); }   /* 72 px bar + the hint (44) + 12 */
+  .is-presenting .presence { position: absolute; left: 50%; top: 50%; transform: translate(-50%, -50%); z-index: 0; pointer-events: none; }
+  .is-presenting .avatar { width: min(88vw, 320px); height: min(88vw, 320px); filter: blur(8px); opacity: .22; border-color: transparent; transition: opacity .4s ease, filter .4s ease; }
+  body.is-presenting.is-thinking .avatar { opacity: .85; }
+  body.is-presenting.is-talking .avatar { opacity: .45; }
+  .is-presenting .travis-name { display: none; }
+  .is-presenting .chat { position: relative; z-index: 1; flex: 1 1 auto; min-height: 0; font-size: 15px; }
+  .is-presenting .log { flex: 1 1 auto; min-height: 0; max-height: none; }
+  .is-presenting .stage-hint:not([hidden]) { display: flex; }
   /* the glass bar is centred: its panel opens centred under it */
   .dd-trigger { padding: 0 10px; font-size: 11px; }
   .timeline li { grid-template-columns: 64px minmax(0, 1fr); }
